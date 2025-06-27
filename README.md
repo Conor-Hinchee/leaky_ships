@@ -1,37 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🚢 Leaky Ships
 
-## Getting Started
+Welcome to 🚢 Leaky Ships. Here is what we have to offer:
 
-First, run the development server:
+- Beautiful ships and sailboats showcase
+- Interactive fleet gallery with infinite scroll
+- Ship status monitoring (because we hate leaky ships!)
+- Responsive nautical design
+- Maritime-themed user interface
+- Celebration of seaworthy vessels
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ⛵ Why We Love Ships
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ships and sailboats represent **freedom**, **adventure**, and the **human spirit**! From the graceful lines of a racing yacht to the sturdy hull of a cargo vessel, each ship tells a story of craftsmanship and purpose.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+**But leaky ships?** Ugh, they're the absolute worst! There's nothing more frustrating than a beautiful vessel that can't stay afloat
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ⚠️ Important Notice
 
-## Learn More
+This application is intentionally designed to develop memory leaks and performance issues. I am building this project to as an example of how my Heap Analysis tool can help identify and fix memory leaks in JavaScript applications. You can find that project [here](https://github.com/moarwaffles/heap-analysis-tool).
 
-To learn more about Next.js, take a look at the following resources:
+- a Next.js web application celebrating our absolute love for sailboats and ships of all kinds!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Built with [Next.js](https://nextjs.org) and bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Tech Stack
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# leaky_ships
+- **Framework**: Next.js 15
+- **Styling**: Tailwind CSS with nautical themes
+- **Language**: JavaScript/React
+- **Package Manager**: npm/yarn/pnpm/bun
+- **Theme**: Maritime and sailing-inspired design
+- **Vibes**: Nautical, adventurous, and a bit salty!
