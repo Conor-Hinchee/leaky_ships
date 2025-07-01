@@ -1,14 +1,27 @@
 import Image from "next/image";
-import { testFlag } from "../../flags";
+import { testFlag, leakyIntervals, detachedDOMNodes } from "../../flags";
 import ShipGrid from "./components/ShipGrid";
+import LeakyIntervals from "./components/LeakyIntervals";
+import DetachedDOMNodes from "./components/DetachedDOMNodes";
+import DebugPanel from "./components/DebugPanel";
 
 export default async function Home() {
   // Evaluate test flag on the server
   const isTestFlagOn = await testFlag();
+  const isEnabledLeakyIntervals = await leakyIntervals();
+  const isEnabledDetachedDOMNodes = await detachedDOMNodes();
   
   // Log to console if flag is on
   if (isTestFlagOn) {
     console.log('hello from flags');
+  }
+
+  if (isEnabledLeakyIntervals) {
+    console.log('🚨 LEAK SCENARIO #1 FLAG ENABLED - Memory leaks incoming!');
+  }
+
+  if (isEnabledDetachedDOMNodes) {
+    console.log('🏝️ LEAK SCENARIO #2 FLAG ENABLED - Detached DOM nodes incoming!');
   }
 
   return (
@@ -43,8 +56,29 @@ export default async function Home() {
         </main>
       </div>
 
+      {/* Leak Scenario #1 - Uncleared Intervals & Timeouts */}
+      {isEnabledLeakyIntervals && (
+        <div className="px-8 pb-8">
+          <div className="max-w-4xl mx-auto">
+            <LeakyIntervals />
+          </div>
+        </div>
+      )}
+
+      {/* Leak Scenario #2 - Detached DOM Nodes */}
+      {isEnabledDetachedDOMNodes && (
+        <div className="px-8 pb-8">
+          <div className="max-w-4xl mx-auto">
+            <DetachedDOMNodes />
+          </div>
+        </div>
+      )}
+
       {/* Ship Grid Component */}
       <ShipGrid />
+      
+      {/* Debug Panel for toggling leak scenarios */}
+      <DebugPanel />
     </div>
   );
 }
