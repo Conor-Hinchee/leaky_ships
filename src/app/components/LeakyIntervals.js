@@ -59,7 +59,7 @@ export default function LeakyIntervals() {
           setLeakyMessages(prevMessages => [
             ...prevMessages,
             {
-              id: Date.now() + Math.random(),
+              id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // More unique ID
               message: `🌊 Deep sea scan #${newCount} - Found ${largeDataCapture.oceanData.length} data points`,
               data: largeDataCapture, // Keeping reference to large data!
               timestamp: new Date().toLocaleTimeString()
@@ -159,16 +159,10 @@ export default function LeakyIntervals() {
         </div>
       </div>
 
-      <div className="mt-4 p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded border border-yellow-300 dark:border-yellow-700">
-        <p className="text-sm text-yellow-800 dark:text-yellow-200">
-          ⚠️ <strong>Memory Leak Active!</strong> This component is creating:
-        </p>
-        <ul className="text-xs text-yellow-700 dark:text-yellow-300 mt-2 ml-4">
-          <li>• Uncleared intervals that capture ship position data</li>
-          <li>• Uncleared timeouts with large closure captures</li>
-          <li>• Growing arrays with accumulated message data</li>
-          <li>• Multiple rapid intervals creating closures</li>
-        </ul>
+      <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/30 rounded border border-red-300 dark:border-red-700">
+        <div className="text-sm text-red-700 dark:text-red-300">
+          <strong>Memory Leak Pattern:</strong> This component creates intervals and timeouts that are never cleared, and closures that capture large data. These references accumulate in memory and cannot be garbage collected, leading to a memory leak.
+        </div>
       </div>
     </div>
   );

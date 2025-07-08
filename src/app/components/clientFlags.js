@@ -4,17 +4,17 @@
 export const clientFlags = {
   testFlag: {
     key: 'test-flag',
-    value: true, // Matches flags.ts
+    value: false, // Set to false for testing
     description: 'A basic test flag for testing the feature flag system'
   },
   leakyIntervals: {
     key: 'leaky-intervals', 
-    value: true, // Matches flags.ts
+    value: true, // Keep this one on
     description: 'Creates memory leaks with uncleared setInterval/setTimeout'
   },
   detachedDOMNodes: {
     key: 'detached-dom-nodes',
-    value: true, // Matches flags.ts  
+    value: false, // Set to false for testing
     description: 'Creates memory leaks by creating DOM nodes that become detached'
   }
 };

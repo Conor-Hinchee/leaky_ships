@@ -78,7 +78,13 @@ export default async function Home() {
       <ShipGrid />
       
       {/* Debug Panel for toggling leak scenarios */}
-      <DebugPanel />
+      <DebugPanel 
+        flagValues={{
+          testFlag: isTestFlagOn,
+          leakyIntervals: isEnabledLeakyIntervals,
+          detachedDOMNodes: isEnabledDetachedDOMNodes
+        }}
+      />
     </div>
   );
 }

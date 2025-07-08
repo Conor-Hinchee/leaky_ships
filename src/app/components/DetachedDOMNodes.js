@@ -158,13 +158,6 @@ export default function DetachedDOMNodes() {
         </div>
       </div>
       
-      <div className="text-sm text-red-600 dark:text-red-400 space-y-1">
-        <div>❌ <strong>Detached DOM Leak:</strong> DOM nodes removed from page but references kept in JS arrays</div>
-        <div>❌ <strong>Complex Structures:</strong> Each island contains multiple nested elements</div>
-        <div>❌ <strong>Rapid Creation:</strong> New detached nodes created every second</div>
-        <div>❌ <strong>No Cleanup:</strong> References accumulate indefinitely</div>
-      </div>
-      
       <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/30 rounded border border-red-300 dark:border-red-700">
         <div className="text-sm text-red-700 dark:text-red-300">
           <strong>Memory Leak Pattern:</strong> This component creates DOM elements, adds them to the page, 

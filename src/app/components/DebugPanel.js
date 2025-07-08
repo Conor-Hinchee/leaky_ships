@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { clientFlags, getFlagValue, getFlagKey } from "./clientFlags.js";
 
-export default function DebugPanel() {
+export default function DebugPanel({ flagValues }) {
   const [isOpen, setIsOpen] = useState(false);
   const [copiedFlag, setCopiedFlag] = useState(null);
 
@@ -45,7 +45,7 @@ export default function DebugPanel() {
           
           <div className="space-y-3">
             {flagInstructions.map((instruction, index) => (
-              <div key={index} className="border border-slate-200 dark:border-slate-600 rounded p-3">
+              <div key={instruction.flag} className="border border-slate-200 dark:border-slate-600 rounded p-3">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center">
                     <span className="text-lg mr-2">{instruction.emoji}</span>
@@ -54,11 +54,11 @@ export default function DebugPanel() {
                     </h4>
                   </div>
                   <div className={`px-2 py-1 rounded text-xs font-mono ${
-                    getFlagValue(instruction.flag) 
+                    flagValues?.[instruction.flag] 
                       ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300' 
                       : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'
                   }`}>
-                    {getFlagValue(instruction.flag) ? 'ON' : 'OFF'}
+                    {flagValues?.[instruction.flag] ? 'ON' : 'OFF'}
                   </div>
                 </div>
                 

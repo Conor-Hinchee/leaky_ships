@@ -27,12 +27,12 @@ export default function ShipGrid() {
       const newShips = Array.from({ length: 8 }, (_, index) => {
         const shipIndex = (page * 8 + index) % shipItems.length;
         const baseShip = shipItems[shipIndex];
-        const uniqueId = Date.now() + index; // Ensure truly unique IDs
+        const uniqueId = `ship-${page}-${index}-${Date.now()}`; // More unique string ID
         
         return {
           id: uniqueId,
           emoji: baseShip.emoji,
-          name: `${baseShip.name} #${Math.floor(uniqueId / 1000)}`,
+          name: `${baseShip.name} #${page * 8 + index + 1}`,
           status: baseShip.status,
           fleetNumber: page * 8 + index + 1,
         };
