@@ -1,8 +1,9 @@
 import Image from "next/image";
-import { testFlag, leakyIntervals, detachedDOMNodes } from "../../flags";
+import { testFlag, leakyIntervals, detachedDOMNodes, retainedClosures } from "../../flags";
 import ShipGrid from "./components/ShipGrid";
 import LeakyIntervals from "./components/LeakyIntervals";
 import DetachedDOMNodes from "./components/DetachedDOMNodes";
+import RetainedClosures from "./components/RetainedClosures";
 import DebugPanel from "./components/DebugPanel";
 
 export default async function Home() {
@@ -10,6 +11,7 @@ export default async function Home() {
   const isTestFlagOn = await testFlag();
   const isEnabledLeakyIntervals = await leakyIntervals();
   const isEnabledDetachedDOMNodes = await detachedDOMNodes();
+  const isEnabledRetainedClosures = await retainedClosures();
   
   // Log to console if flag is on
   if (isTestFlagOn) {
@@ -22,6 +24,10 @@ export default async function Home() {
 
   if (isEnabledDetachedDOMNodes) {
     console.log('🏝️ LEAK SCENARIO #2 FLAG ENABLED - Detached DOM nodes incoming!');
+  }
+
+  if (isEnabledRetainedClosures) {
+    console.log('🍾 LEAK SCENARIO #3 FLAG ENABLED - Retained closures incoming!');
   }
 
   return (
@@ -74,6 +80,15 @@ export default async function Home() {
         </div>
       )}
 
+      {/* Leak Scenario #3 - Retained Closures */}
+      {isEnabledRetainedClosures && (
+        <div className="px-8 pb-8">
+          <div className="max-w-4xl mx-auto">
+            <RetainedClosures />
+          </div>
+        </div>
+      )}
+
       {/* Ship Grid Component */}
       <ShipGrid />
       
@@ -82,7 +97,8 @@ export default async function Home() {
         flagValues={{
           testFlag: isTestFlagOn,
           leakyIntervals: isEnabledLeakyIntervals,
-          detachedDOMNodes: isEnabledDetachedDOMNodes
+          detachedDOMNodes: isEnabledDetachedDOMNodes,
+          retainedClosures: isEnabledRetainedClosures
         }}
       />
     </div>

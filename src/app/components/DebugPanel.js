@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { clientFlags, getFlagValue, getFlagKey } from "./clientFlags.js";
 
 export default function DebugPanel({ flagValues }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,20 +10,30 @@ export default function DebugPanel({ flagValues }) {
     {
       flag: "testFlag",
       scenario: "Test Flag",
-      description: clientFlags.testFlag.description,
-      emoji: "🧪"
+      description: "A basic test flag for testing the feature flag system",
+      emoji: "🧪",
+      key: "test-flag"
     },
     {
       flag: "leakyIntervals",
       scenario: "Uncleared Intervals & Timeouts",
-      description: clientFlags.leakyIntervals.description,
-      emoji: "⏰"
+      description: "Creates memory leaks with uncleared setInterval/setTimeout",
+      emoji: "⏰",
+      key: "leaky-intervals"
     },
     {
       flag: "detachedDOMNodes", 
       scenario: "Detached DOM Nodes",
-      description: clientFlags.detachedDOMNodes.description,
-      emoji: "🔗"
+      description: "Creates memory leaks by creating DOM nodes that become detached",
+      emoji: "🔗",
+      key: "detached-dom-nodes"
+    },
+    {
+      flag: "retainedClosures",
+      scenario: "Retained Closures",
+      description: "Creates memory leaks by retaining closures that capture large variables",
+      emoji: "🍾",
+      key: "retained-closures"
     }
   ];
 
@@ -67,15 +76,11 @@ export default function DebugPanel({ flagValues }) {
                 </p>
                 
                 <div className="bg-slate-100 dark:bg-slate-700 rounded p-2 text-xs font-mono">
-                  {/* <div className="text-slate-500 dark:text-slate-400 mb-1">Current Status:</div>
-                  <div className={getFlagValue(instruction.flag) ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
-                    return {getFlagValue(instruction.flag).toString()}; // {getFlagValue(instruction.flag) ? 'ON' : 'OFF'}
-                  </div> */}
                   <div className="text-slate-500 dark:text-slate-400 mb-1 mt-2 flex items-center justify-between">
-                    <span>Flag Key: <code>{getFlagKey(instruction.flag)}</code></span>
+                    <span>Flag Key: <code>{instruction.key}</code></span>
                     <button
                       onClick={() => {
-                        navigator.clipboard.writeText(getFlagKey(instruction.flag));
+                        navigator.clipboard.writeText(instruction.key);
                         setCopiedFlag(instruction.flag);
                         setTimeout(() => setCopiedFlag(null), 2000);
                       }}
