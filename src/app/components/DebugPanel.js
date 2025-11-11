@@ -34,6 +34,55 @@ export default function DebugPanel({ flagValues }) {
       description: "Creates memory leaks by retaining closures that capture large variables",
       emoji: "🍾",
       key: "retained-closures"
+    },
+    {
+      flag: "growingCollections",
+      scenario: "Growing Collections",
+      description: "Creates memory leaks with ever-growing arrays, maps, sets and objects",
+      emoji: "🚢",
+      key: "growing-collections"
+    },
+    {
+      flag: "leakingEventListeners",
+      scenario: "Leaking Event Listeners",
+      description: "Creates memory leaks by adding event listeners that are never removed",
+      emoji: "📻",
+      key: "leaking-event-listeners"
+    },
+    {
+      flag: "memoryHeavyImages",
+      scenario: "Memory-Heavy Images",
+      description: "Creates memory leaks by processing large images into data URLs that accumulate",
+      emoji: "📸",
+      key: "memory-heavy-images"
+    },
+    {
+      flag: "zombieComponents",
+      scenario: "Zombie Components",
+      description: "Creates memory leaks by mounting React components that never properly unmount",
+      emoji: "👻",
+      key: "zombie-components"
+    },
+    {
+      flag: "apolloCacheFlood",
+      scenario: "Apollo/Redux Cache Flood",
+      description: "Creates memory leaks by flooding Apollo cache and Redux store with massive GraphQL query results",
+      emoji: "💾",
+      key: "apollo-cache-flood"
+    },
+    {
+      flag: "webSocketSubscriptions",
+      scenario: "WebSocket Subscriptions",
+      description: "Creates memory leaks by opening WebSocket connections that never close and accumulating messages forever",
+      emoji: "📡",
+      key: "websocket-subscriptions"
+    },
+    {
+      flag: "globalAccumulation",
+      scenario: "Global Accumulation",
+      description: "Creates memory leaks by accumulating all user interactions and data in window.__leakyStuff",
+      emoji: "📝",
+      key: "global-accumulation"
     }
   ];
 
