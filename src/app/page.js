@@ -1,5 +1,9 @@
+"use client";
+
 import Image from "next/image";
-import { testFlag, leakyIntervals, detachedDOMNodes, retainedClosures, growingCollections, leakingEventListeners, memoryHeavyImages, zombieComponents, globalAccumulation, apolloCacheFlood, webSocketSubscriptions } from "../../flags";
+import { useState, useEffect } from "react";
+import { testFlag, leakyIntervals, detachedDOMNodes, retainedClosures, growingCollections, leakingEventListeners, memoryHeavyImages, zombieComponents, globalAccumulation, apolloCacheFlood, webSocketSubscriptions } from "../../flags-client";
+import { FlagsProvider, useFlagsClient } from "./components/FlagsProvider";
 import ShipGrid from "./components/ShipGrid";
 import LeakyIntervals from "./components/LeakyIntervals";
 import DetachedDOMNodes from "./components/DetachedDOMNodes";
@@ -13,19 +17,21 @@ import ApolloCacheFlood from "./components/ApolloCacheFlood";
 import WebSocketSubscriptions from "./components/WebSocketSubscriptions";
 import DebugPanel from "./components/DebugPanel";
 
-export default async function Home() {
-  // Evaluate test flag on the server
-  const isTestFlagOn = await testFlag();
-  const isEnabledLeakyIntervals = await leakyIntervals();
-  const isEnabledDetachedDOMNodes = await detachedDOMNodes();
-  const isEnabledRetainedClosures = await retainedClosures();
-  const isEnabledGrowingCollections = await growingCollections();
-  const isEnabledLeakingEventListeners = await leakingEventListeners();
-  const isEnabledMemoryHeavyImages = await memoryHeavyImages();
-  const isEnabledZombieComponents = await zombieComponents();
-  const isEnabledGlobalAccumulation = await globalAccumulation();
-  const isEnabledApolloCacheFlood = await apolloCacheFlood();
-  const isEnabledWebSocketSubscriptions = await webSocketSubscriptions();
+// Inner component that uses client-side flags
+function HomeContent() {
+  const flags = useFlagsClient();
+  
+  const isTestFlagOn = flags.testFlag;
+  const isEnabledLeakyIntervals = flags.leakyIntervals;
+  const isEnabledDetachedDOMNodes = flags.detachedDOMNodes;
+  const isEnabledRetainedClosures = flags.retainedClosures;
+  const isEnabledGrowingCollections = flags.growingCollections;
+  const isEnabledLeakingEventListeners = flags.leakingEventListeners;
+  const isEnabledMemoryHeavyImages = flags.memoryHeavyImages;
+  const isEnabledZombieComponents = flags.zombieComponents;
+  const isEnabledGlobalAccumulation = flags.globalAccumulation;
+  const isEnabledApolloCacheFlood = flags.apolloCacheFlood;
+  const isEnabledWebSocketSubscriptions = flags.webSocketSubscriptions;
   
   // Log to console if flag is on
   if (isTestFlagOn) {
@@ -199,20 +205,72 @@ export default async function Home() {
       
       {/* Debug Panel for toggling leak scenarios */}
       <DebugPanel 
-        flagValues={{
-          testFlag: isTestFlagOn,
-          leakyIntervals: isEnabledLeakyIntervals,
-          detachedDOMNodes: isEnabledDetachedDOMNodes,
-          retainedClosures: isEnabledRetainedClosures,
-          growingCollections: isEnabledGrowingCollections,
-          leakingEventListeners: isEnabledLeakingEventListeners,
-          memoryHeavyImages: isEnabledMemoryHeavyImages,
-          zombieComponents: isEnabledZombieComponents,
-          apolloCacheFlood: isEnabledApolloCacheFlood,
-          webSocketSubscriptions: isEnabledWebSocketSubscriptions,
-          globalAccumulation: isEnabledGlobalAccumulation
-        }}
+        flagValues={flags}
       />
     </div>
+  );
+}
+
+export default function Home() {
+  const [initialFlags, setInitialFlags] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Initialize server-side flags on client
+    const initializeFlags = async () => {
+      try {
+        const flags = {
+          testFlag: await testFlag(),
+          leakyIntervals: await leakyIntervals(),
+          detachedDOMNodes: await detachedDOMNodes(),
+          retainedClosures: await retainedClosures(),
+          growingCollections: await growingCollections(),
+          leakingEventListeners: await leakingEventListeners(),
+          memoryHeavyImages: await memoryHeavyImages(),
+          zombieComponents: await zombieComponents(),
+          globalAccumulation: await globalAccumulation(),
+          apolloCacheFlood: await apolloCacheFlood(),
+          webSocketSubscriptions: await webSocketSubscriptions()
+        };
+        setInitialFlags(flags);
+      } catch (error) {
+        console.error('Error initializing flags:', error);
+        // Fallback to default values
+        setInitialFlags({
+          testFlag: false,
+          leakyIntervals: false,
+          detachedDOMNodes: false,
+          retainedClosures: false,
+          growingCollections: false,
+          leakingEventListeners: false,
+          memoryHeavyImages: false,
+          zombieComponents: false,
+          globalAccumulation: false,
+          apolloCacheFlood: false,
+          webSocketSubscriptions: false
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeFlags();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-blue-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-400 mx-auto mb-4"></div>
+          <p className="text-amber-300 text-lg font-semibold">Loading Memory Leak Fleet...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <FlagsProvider initialFlags={initialFlags}>
+      <HomeContent />
+    </FlagsProvider>
   );
 }

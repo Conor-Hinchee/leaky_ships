@@ -1,10 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function DebugPanel({ flagValues }) {
   const [isOpen, setIsOpen] = useState(false);
   const [copiedFlag, setCopiedFlag] = useState(null);
+  const [localFlags, setLocalFlags] = useState(flagValues || {});
+  const [isUpdating, setIsUpdating] = useState(false);
+  
+  // Initialize flags from localStorage overrides and server values
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const overrides = JSON.parse(localStorage.getItem('flagOverrides') || '{}');
+      const mergedFlags = { ...flagValues, ...overrides };
+      setLocalFlags(mergedFlags);
+    }
+  }, [flagValues]);
 
   const flagInstructions = [
     {
@@ -86,6 +97,29 @@ export default function DebugPanel({ flagValues }) {
     }
   ];
 
+  const toggleFlag = (flagKey) => {
+    const newValue = !localFlags[flagKey];
+    
+    // Update local state immediately
+    setLocalFlags(prev => ({ ...prev, [flagKey]: newValue }));
+    
+    // Persist to localStorage
+    if (typeof window !== 'undefined') {
+      const currentOverrides = JSON.parse(localStorage.getItem('flagOverrides') || '{}');
+      currentOverrides[flagKey] = newValue;
+      localStorage.setItem('flagOverrides', JSON.stringify(currentOverrides));
+    }
+    
+    // Notify parent component of flag change
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('flagChanged', { 
+        detail: { flagKey, value: newValue } 
+      }));
+    }
+    
+    console.log(`🎛️ Flag ${flagKey} toggled to ${newValue}`);
+  };
+
   return (
     <div className="fixed bottom-4 right-4 z-50">
       <button
@@ -96,12 +130,14 @@ export default function DebugPanel({ flagValues }) {
       </button>
       
       {isOpen && (
-        <div className="absolute bottom-12 right-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl p-4 w-96">
-          <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-3">
-            🚨 Memory Leak Scenarios
-          </h3>
+        <div className="absolute bottom-12 right-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl w-96 max-h-[80vh] flex flex-col">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+            <h3 className="font-bold text-slate-800 dark:text-slate-200">
+              🚨 Memory Leak Scenarios
+            </h3>
+          </div>
           
-          <div className="space-y-3">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {flagInstructions.map((instruction, index) => (
               <div key={instruction.flag} className="border border-slate-200 dark:border-slate-600 rounded p-3">
                 <div className="flex items-center justify-between mb-2">
@@ -111,18 +147,37 @@ export default function DebugPanel({ flagValues }) {
                       #{index + 1}: {instruction.scenario}
                     </h4>
                   </div>
-                  <div className={`px-2 py-1 rounded text-xs font-mono ${
-                    flagValues?.[instruction.flag] 
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300' 
-                      : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'
-                  }`}>
-                    {flagValues?.[instruction.flag] ? 'ON' : 'OFF'}
-                  </div>
+                  <button
+                    onClick={() => toggleFlag(instruction.flag)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                      localFlags[instruction.flag] 
+                        ? 'bg-green-600 dark:bg-green-500' 
+                        : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                    title={`Toggle ${instruction.scenario}`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                        localFlags[instruction.flag] ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
                 </div>
                 
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">
                   {instruction.description}
                 </p>
+                
+                <div className={`text-xs px-2 py-1 rounded-full inline-flex items-center mb-2 ${
+                  localFlags[instruction.flag]
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300'
+                    : 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full mr-2 ${
+                    localFlags[instruction.flag] ? 'bg-green-500' : 'bg-gray-400'
+                  }`}></div>
+                  {localFlags[instruction.flag] ? 'ACTIVE - Component Rendering' : 'INACTIVE - Component Hidden'}
+                </div>
                 
                 <div className="bg-slate-100 dark:bg-slate-700 rounded p-2 text-xs font-mono">
                   <div className="text-slate-500 dark:text-slate-400 mb-1 mt-2 flex items-center justify-between">
@@ -148,10 +203,23 @@ export default function DebugPanel({ flagValues }) {
             ))}
           </div>
           
-          <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded text-xs">
-            <p className="text-yellow-800 dark:text-yellow-200">
-              ⚠️ Toggle flags in <code>flags.ts</code> then refresh the page
-            </p>
+          <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-blue-50 dark:bg-blue-900/20 text-xs">
+            <div className="flex items-center justify-between">
+              <p className="text-blue-800 dark:text-blue-200">
+                🎛️ Toggle switches control components instantly - settings saved locally
+              </p>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('flagOverrides');
+                  setLocalFlags(flagValues);
+                  window.location.reload();
+                }}
+                className="text-xs bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-2 py-1 rounded transition-colors"
+                title="Reset all flags to default values"
+              >
+                🔄 Reset All
+              </button>
+            </div>
           </div>
         </div>
       )}
